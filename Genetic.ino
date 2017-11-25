@@ -5,10 +5,12 @@ int bluePin1 = 13;
 int redPin2 = 6;
 int greenPin2 = 5;
 int bluePin2 = 3;
-int _colours[] = {200, 125, 40};
+int _colours[] = {255, 0, 255};
 int _nothing[] = {0, 0, 0};
 int _actual[10][3];
 int _fitness[10];
+int tempGen[10][3];
+int tempFit[10];
 int parentGen[2][3];
  
 //uncomment this line if using a Common Anode LED
@@ -40,7 +42,7 @@ void setup()
   while(canWeEnd(_fitness) == 0)
   {
     Selection(_actual, _fitness);
-    /////// funkcie nevedia vratit array.. upravit vsetko tak aby boli void a public premenne
+    
     
 
     
@@ -102,12 +104,21 @@ void Fitness(int set[10][3])
 void Selection (int prevGen[10][3], int fitness[])
 {
   int best = 0;
-  int* customFitness;
-  int* customPrevGen[10][3];
+  int customFitness[10];
+  int customPrevGen[10][3];
   for(int i=0;i<10;i++)
   {
     customFitness[i] = fitness[i];
   }
+
+  for(int k = 0; k<sizeof(prevGen); k++)
+  {
+    for(int l = 0; l<3; l++)
+    {
+      customPrevGen[k][l] = prevGen[k][l];
+    }
+  } 
+  
   int j = 0;
   while(j<2)
   {
@@ -123,14 +134,31 @@ void Selection (int prevGen[10][3], int fitness[])
     {
       parentGen[j][i] = prevGen[best][i];
     }
-    customFitness = removeFromArray(customFitness,best);
-    customPrevGen = removeFrom2DArray(customPrevGen,best);
+    removeFromArray(customFitness,best);
+    memset(customFitness, 0, sizeof(customFitness));
+    for(int k=0;k<3;k++)
+    {
+      customFitness[k] = tempFit[k];
+    }
+    removeFrom2DArray(customPrevGen,best);
+    for(int k=0;k<3;k++)
+    {
+      memset(customPrevGen[k], 0, sizeof(customPrevGen[k]));
+    } 
+    for(int k = 0; k<sizeof(tempGen); k++)
+    {
+      for(int l = 0; l<3; l++)
+      {
+        customPrevGen[k][l] = tempGen[k][l];
+      }
+    }
+    
     j++;
   }
   
 }
 
-int* removeFromArray (int arraY[], int index)
+void removeFromArray (int arraY[], int index)
 {
   int returnArray[sizeof(arraY) - 1];
   int i=0;
@@ -152,10 +180,13 @@ int* removeFromArray (int arraY[], int index)
       i++;
     } 
   }
-  //return returnArray;
+  for(int k=0;k<sizeof(returnArray);k++)
+  {
+    tempFit[k] = returnArray[k];
+  }
 }
 
-int* removeFrom2DArray (int* arraY[10][3], int index)
+int removeFrom2DArray (int arraY[10][3], int index)
 {
   int returnArray[sizeof(arraY) - 1][3];
   for(int i=0; i<sizeof(arraY);i++)
@@ -181,7 +212,16 @@ int* removeFrom2DArray (int* arraY[10][3], int index)
         }
     } 
   }
-  return returnArray;
+  for(int k = 0; k<sizeof(returnArray); k++)
+  {
+    for(int l = 0; l<3; l++)
+    {
+      tempGen[k][l] = returnArray[k][l];
+    }
+  }
+
+  
+
 }
  
 void setColorOnFirst(int colour[])
