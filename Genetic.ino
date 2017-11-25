@@ -45,41 +45,9 @@ void setup()
   {
     Selection(_actual);
     Crossover(parentGen);
-    //setColorOnFirst(_nothing);
-    //k++;
-
-
-    
-    /*setColorOnSecond(parentGen[0]);
-    delay(1000);
-    setColorOnSecond(parentGen[1]);
-    delay(1000);*/
-    
-    /*setColorOnSecond(newGen[0]);
-    delay(1000);
-    setColorOnSecond(newGen[1]);
-    delay(1000);
-    setColorOnSecond(newGen[2]);
-    delay(1000);
-    setColorOnSecond(newGen[3]);
-    delay(1000);
-    setColorOnSecond(newGen[4]);
-    delay(1000);
-    setColorOnSecond(newGen[5]);
-    delay(1000);
-    setColorOnSecond(newGen[6]);
-    delay(1000);
-    setColorOnSecond(newGen[7]);
-    delay(1000);
-    setColorOnSecond(newGen[8]);
-    delay(1000);
-    setColorOnSecond(newGen[9]);
-    delay(1000);
-    setColorOnSecond(_nothing);
-    delay(1000);*/
-
     Mutation();
-
+    Fitness(newGen);
+    Substitute();
 
     /*setColorOnSecond(newGen[0]);
     delay(1000);
@@ -103,10 +71,44 @@ void setup()
     delay(1000);
     setColorOnSecond(_nothing);
     delay(1000);*/
+
+    /*setColorOnSecond(newGen[0]);
+
+    setColorOnSecond(newGen[1]);
+  
+    setColorOnSecond(newGen[2]);
+  
+    setColorOnSecond(newGen[3]);
+  
+    setColorOnSecond(newGen[4]);
+   
+    setColorOnSecond(newGen[5]);
+   
+    setColorOnSecond(newGen[6]);
+    
+    setColorOnSecond(newGen[7]);
+  
+    setColorOnSecond(newGen[8]);
+  
+    setColorOnSecond(newGen[9]);
+   
+    setColorOnSecond(_nothing);*/
+ 
   }
 
+  int besT = 0;
+  for(int i=0;i<10;i++)
+  {
+    if(_fitness>besT)
+    {
+      besT = i;
+    }
+  }
   
-
+  setColorOnSecond(newGen[besT]);
+  Serial.println(newGen[besT][0]);
+  Serial.println(newGen[besT][1]);
+  Serial.println(newGen[besT][2]);
   
   
 }
@@ -122,6 +124,34 @@ void loop()
   
 }
 
+void Substitute()
+{
+  int ranD;
+  int temp[10][3];
+  for(int i=0;i<10;i++)
+  {
+    for(int j=0;j<3;j++)
+    {
+      temp[i][j] = newGen[i][j];
+    }
+  }
+  for(int i=0;i<5;i++)
+  {
+    ranD = random(10);
+    for(int j=0;j<3;j++)
+    {
+      newGen[i][j] = temp[ranD][j];
+    }
+  }
+  for(int i=5;i<10;i++)
+  {
+    ranD = random(10);
+    for(int j=0;j<3;j++)
+    {
+      newGen[i][j] = _actual[ranD][j];
+    }
+  }
+}
 
 void Crossover(int parents[2][3])
 {
@@ -166,7 +196,7 @@ int canWeEnd(int fitness[])
 {
   for(int i=0; i<10; i++)
   {
-    if(fitness[i] == 3)
+    if(fitness[i] >= 150)
     {
       return 1;
       break;
@@ -179,18 +209,31 @@ void Fitness(int set[10][3])
 {
   for(int i=0; i<10;i++)
   {
-    if(set[i][0] == _colours[0])
+    if(set[i][0] > _colours[0]-20 && set[i][0] < _colours[0]+20)
     {
       _fitness[i] = _fitness[i] + 1;
+    }
+    if(set[i][1] > _colours[1]-20 && set[i][1] < _colours[1]+20)
+    {
+      _fitness[i] = _fitness[i] + 1;
+    }
+    if(set[i][2] > _colours[2]-20 && set[i][2] < _colours[2]+20)
+    {
+      _fitness[i] = _fitness[i] + 1;
+    }
+    if(set[i][0] == _colours[0])
+    {
+      _fitness[i] = _fitness[i] + 50;
     }
     if(set[i][1] == _colours[1])
     {
-      _fitness[i] = _fitness[i] + 1;
+      _fitness[i] = _fitness[i] + 50;
     }
     if(set[i][2] == _colours[2])
     {
-      _fitness[i] = _fitness[i] + 1;
+      _fitness[i] = _fitness[i] + 50;
     }
+    Serial.println(_fitness[i]);
   }
 }
 
