@@ -77,6 +77,32 @@ void setup()
     delay(1000);
     setColorOnSecond(_nothing);
     delay(1000);*/
+
+    Mutation();
+
+
+    /*setColorOnSecond(newGen[0]);
+    delay(1000);
+    setColorOnSecond(newGen[1]);
+    delay(1000);
+    setColorOnSecond(newGen[2]);
+    delay(1000);
+    setColorOnSecond(newGen[3]);
+    delay(1000);
+    setColorOnSecond(newGen[4]);
+    delay(1000);
+    setColorOnSecond(newGen[5]);
+    delay(1000);
+    setColorOnSecond(newGen[6]);
+    delay(1000);
+    setColorOnSecond(newGen[7]);
+    delay(1000);
+    setColorOnSecond(newGen[8]);
+    delay(1000);
+    setColorOnSecond(newGen[9]);
+    delay(1000);
+    setColorOnSecond(_nothing);
+    delay(1000);*/
   }
 
   
@@ -112,6 +138,26 @@ void Crossover(int parents[2][3])
       //Serial.print("ranDparent is: ");
       //Serial.println(ranDparent);
       newGen[i][j] = parents[ranDparent][ranDpart];
+    }
+  }
+}
+
+void Mutation()
+{
+  int ranD;
+  for(int i=0; i< 10;i++)
+  {
+    ranD = random(100);
+    if(ranD >50)
+    {
+      for(int j=0; j<3; j++)
+      {
+        ranD = random(100);
+        if(ranD > 35)
+        {
+          newGen[i][j] += 20;
+        }
+      }
     }
   }
 }
