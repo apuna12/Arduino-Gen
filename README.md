@@ -1,1 +1,1 @@
-# My neural network project
+# My arduino genetic algorythm

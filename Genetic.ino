@@ -12,10 +12,10 @@ int _fitness[10];
 int tempGen[10][3];
 int tempFit[10];
 int parentGen[2][3];
+int newGen[10][3];
  
 //uncomment this line if using a Common Anode LED
 #define COMMON_ANODE
- 
 void setup()
 {
   pinMode(redPin1, OUTPUT);
@@ -23,33 +23,60 @@ void setup()
   pinMode(bluePin1, OUTPUT);
   pinMode(redPin2, OUTPUT);
   pinMode(greenPin2, OUTPUT);
-  pinMode(bluePin2, OUTPUT); 
+  pinMode(bluePin2, OUTPUT);
+  Serial.begin(9600);
   setColorOnFirst(_colours);
   setColorOnSecond(_nothing);  
+  //setColorOnSecond(_colours); 
  //initialization
   for(int i=0; i<10; i++)
   {
 
     for(int j=0; j<3; j++)
     {
-      _actual[i][j] = random(0,255);
+      _actual[i][j] = random(0,256);
     }
     
   }
   // first Fitness
   Fitness(_actual);
-
-  while(canWeEnd(_fitness) == 0)
+  int k=0;
+  while(canWeEnd(_fitness) == 0)//k<2
   {
-    Selection(_actual, _fitness);
-    
-    
+    Selection(_actual);
+    Crossover(parentGen);
+    //setColorOnFirst(_nothing);
+    //k++;
+
 
     
-    setColorOnSecond(parentGen[0]);
+    /*setColorOnSecond(parentGen[0]);
     delay(1000);
     setColorOnSecond(parentGen[1]);
+    delay(1000);*/
+    
+    /*setColorOnSecond(newGen[0]);
     delay(1000);
+    setColorOnSecond(newGen[1]);
+    delay(1000);
+    setColorOnSecond(newGen[2]);
+    delay(1000);
+    setColorOnSecond(newGen[3]);
+    delay(1000);
+    setColorOnSecond(newGen[4]);
+    delay(1000);
+    setColorOnSecond(newGen[5]);
+    delay(1000);
+    setColorOnSecond(newGen[6]);
+    delay(1000);
+    setColorOnSecond(newGen[7]);
+    delay(1000);
+    setColorOnSecond(newGen[8]);
+    delay(1000);
+    setColorOnSecond(newGen[9]);
+    delay(1000);
+    setColorOnSecond(_nothing);
+    delay(1000);*/
   }
 
   
@@ -67,6 +94,26 @@ void loop()
     delay(1000);
   }*/
   
+}
+
+
+void Crossover(int parents[2][3])
+{
+  int ranDpart;
+  int ranDparent;
+  for(int i=0; i<10; i++)
+  {
+    for(int j=0; j<3; j++)
+    {
+      ranDpart = random(0,3);
+      //Serial.print("ranDpart is: ");
+      //Serial.println(ranDpart);
+      ranDparent = random(0,2);
+      //Serial.print("ranDparent is: ");
+      //Serial.println(ranDparent);
+      newGen[i][j] = parents[ranDparent][ranDpart];
+    }
+  }
 }
 
 int canWeEnd(int fitness[])
@@ -101,61 +148,19 @@ void Fitness(int set[10][3])
   }
 }
 
-void Selection (int prevGen[10][3], int fitness[])
+void Selection (int prevGen[10][3])
 {
-  int best = 0;
-  int customFitness[10];
-  int customPrevGen[10][3];
-  for(int i=0;i<10;i++)
+  int ranD = random(0,10);
+  int ranD2 = random(0,10);
+  for(int i=0; i<3; i++)
   {
-    customFitness[i] = fitness[i];
+    parentGen[0][i] = prevGen[ranD][i];
+  }
+  for(int i=0; i<3; i++)
+  {
+    parentGen[1][i] = prevGen[ranD2][i];
   }
 
-  for(int k = 0; k<sizeof(prevGen); k++)
-  {
-    for(int l = 0; l<3; l++)
-    {
-      customPrevGen[k][l] = prevGen[k][l];
-    }
-  } 
-  
-  int j = 0;
-  while(j<2)
-  {
-    best = 0;
-    for(int i=0; i<10; i++)
-    {
-      if(customFitness[i] > best)
-      {
-       best = i;
-      }
-    }
-    for(int i=0;i<3;i++)
-    {
-      parentGen[j][i] = prevGen[best][i];
-    }
-    removeFromArray(customFitness,best);
-    memset(customFitness, 0, sizeof(customFitness));
-    for(int k=0;k<3;k++)
-    {
-      customFitness[k] = tempFit[k];
-    }
-    removeFrom2DArray(customPrevGen,best);
-    for(int k=0;k<3;k++)
-    {
-      memset(customPrevGen[k], 0, sizeof(customPrevGen[k]));
-    } 
-    for(int k = 0; k<sizeof(tempGen); k++)
-    {
-      for(int l = 0; l<3; l++)
-      {
-        customPrevGen[k][l] = tempGen[k][l];
-      }
-    }
-    
-    j++;
-  }
-  
 }
 
 void removeFromArray (int arraY[], int index)
