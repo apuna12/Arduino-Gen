@@ -7,17 +7,19 @@ int greenPin2 = 5;
 int bluePin2 = 3;
 int _colours[] = {255, 0, 255};
 int _nothing[] = {0, 0, 0};
-int _actual[10][3];
-int _fitness[10];
-int tempGen[10][3];
-int tempFit[10];
-int parentGen[2][3];
-int newGen[10][3];
+bool** _actual = (bool**)malloc(10*sizeof(bool*));
+float _fitness[10];
+bool tempGen[10][3];
+bool tempFit[10];
+int* parentGen = (int*)malloc(2*sizeof(int));;
+bool** newGen = (bool**)malloc(10*sizeof(bool*));
  
 //uncomment this line if using a Common Anode LED
 #define COMMON_ANODE
 void setup()
 {
+  setColorOnFirst(_colours);
+  randomSeed(analogRead(0));
   pinMode(redPin1, OUTPUT);
   pinMode(greenPin1, OUTPUT);
   pinMode(bluePin1, OUTPUT);
@@ -25,91 +27,45 @@ void setup()
   pinMode(greenPin2, OUTPUT);
   pinMode(bluePin2, OUTPUT);
   Serial.begin(9600);
-  setColorOnFirst(_colours);
+  
   setColorOnSecond(_nothing);  
-  //setColorOnSecond(_colours); 
+  
  //initialization
   for(int i=0; i<10; i++)
   {
-
-    for(int j=0; j<3; j++)
+    _actual[i] = (bool*)malloc(24*sizeof(bool));
+    for(int j=0; j<24; j++)
     {
-      _actual[i][j] = random(0,256);
-    }
-    
+      _actual[i][j] = random(0,2);
+    }    
   }
+  
   // first Fitness
   Fitness(_actual);
+  Serial.print("ide");
   int k=0;
-  while(canWeEnd(_fitness) == 0)//k<2
+  while(canWeEnd(_fitness) == 0)
   {
-    Selection(_actual);
-    Crossover(parentGen);
-    Mutation();
-    Fitness(newGen);
-    Substitute();
-
-    /*setColorOnSecond(newGen[0]);
-    delay(1000);
-    setColorOnSecond(newGen[1]);
-    delay(1000);
-    setColorOnSecond(newGen[2]);
-    delay(1000);
-    setColorOnSecond(newGen[3]);
-    delay(1000);
-    setColorOnSecond(newGen[4]);
-    delay(1000);
-    setColorOnSecond(newGen[5]);
-    delay(1000);
-    setColorOnSecond(newGen[6]);
-    delay(1000);
-    setColorOnSecond(newGen[7]);
-    delay(1000);
-    setColorOnSecond(newGen[8]);
-    delay(1000);
-    setColorOnSecond(newGen[9]);
-    delay(1000);
-    setColorOnSecond(_nothing);
-    delay(1000);*/
-
-    /*setColorOnSecond(newGen[0]);
-
-    setColorOnSecond(newGen[1]);
-  
-    setColorOnSecond(newGen[2]);
-  
-    setColorOnSecond(newGen[3]);
-  
-    setColorOnSecond(newGen[4]);
-   
-    setColorOnSecond(newGen[5]);
-   
-    setColorOnSecond(newGen[6]);
-    
-    setColorOnSecond(newGen[7]);
-  
-    setColorOnSecond(newGen[8]);
-  
-    setColorOnSecond(newGen[9]);
-   
-    setColorOnSecond(_nothing);*/
- 
-  }
-
-  int besT = 0;
-  for(int i=0;i<10;i++)
-  {
-    if(_fitness>besT)
+    k++;
+    newGen = Crossover();
+    /*for(int i=0;i<10;i++)
     {
-      besT = i;
-    }
+      Serial.println(_fitness[i]);
+    }*/
+   // Mutation();
+    //Serial.print("Mutation done");
+    //Fitness(newGen);
+    //Serial.print("Fitness done");
+    //Substitute();
+    //Serial.print("Substitution done");
+    
+    Serial.println(k);
+    delay(500);
   }
-  
-  setColorOnSecond(newGen[besT]);
-  Serial.println(newGen[besT][0]);
-  Serial.println(newGen[besT][1]);
-  Serial.println(newGen[besT][2]);
-  
+  /*for(int i=0;i<10;i++)
+  {
+    Serial.println(_fitness[i]);
+  }*/
   
 }
  
@@ -127,49 +83,51 @@ void loop()
 void Substitute()
 {
   int ranD;
-  int temp[10][3];
+  bool** temp;
+  temp = newGen;
+
   for(int i=0;i<10;i++)
   {
-    for(int j=0;j<3;j++)
+    for(int j=0;j<24;j++)
     {
-      temp[i][j] = newGen[i][j];
+      _actual[i][j] = newGen[i][j];
     }
   }
-  for(int i=0;i<5;i++)
-  {
-    ranD = random(10);
-    for(int j=0;j<3;j++)
-    {
-      newGen[i][j] = temp[ranD][j];
-    }
-  }
-  for(int i=5;i<10;i++)
-  {
-    ranD = random(10);
-    for(int j=0;j<3;j++)
-    {
-      newGen[i][j] = _actual[ranD][j];
-    }
-  }
+
+free(newGen);
 }
 
-void Crossover(int parents[2][3])
+bool** Crossover()
 {
-  int ranDpart;
-  int ranDparent;
-  for(int i=0; i<10; i++)
+  bool** ret = (bool**)malloc(10*sizeof(bool*));
+  
+  for(int i=0;i<10;i++)
   {
-    for(int j=0; j<3; j++)
+    ret[i] = (bool*)malloc(24*sizeof(bool));
+    parentGen[0] = Selection();
+    parentGen[1] = Selection();
+    while(parentGen[0] == parentGen[1])
     {
-      ranDpart = random(0,3);
-      //Serial.print("ranDpart is: ");
-      //Serial.println(ranDpart);
-      ranDparent = random(0,2);
-      //Serial.print("ranDparent is: ");
-      //Serial.println(ranDparent);
-      newGen[i][j] = parents[ranDparent][ranDpart];
+      parentGen[1] = Selection();
+      //Serial.print("\n opakuje sa");
+    }
+    int ranD = random(1,23);
+    for(int j=0;j<24;j++)
+    {
+      if(j<ranD)
+      {
+        ret[i][j] = _actual[parentGen[0]][j];
+        Serial.print("parentgen 0 je: ");
+        Serial.println(parentGen[0]);
+      }
+      else
+      {
+        ret[i][j] = _actual[parentGen[1]][j];
+      }
     }
   }
+  //Serial.print("\n koniec crossoveru \n ");
+  return ret;
 }
 
 void Mutation()
@@ -177,146 +135,105 @@ void Mutation()
   int ranD;
   for(int i=0; i< 10;i++)
   {
-    ranD = random(100);
-    if(ranD >50)
+    ranD = random(100); 
+    for(int j=0; j<24; j++)
     {
-      for(int j=0; j<3; j++)
+      if(ranD >90)
       {
-        ranD = random(100);
-        if(ranD > 35)
-        {
-          newGen[i][j] += 20;
-        }
+        newGen[i][j] = !newGen[i][j]; 
       }
     }
+    
   }
 }
 
-int canWeEnd(int fitness[])
+bool canWeEnd(float fitness[])
 {
   for(int i=0; i<10; i++)
   {
-    if(fitness[i] >= 150)
+    if(fitness[i] == 1000)
     {
       return 1;
-      break;
     }
   }
   return 0;
 }
 
-void Fitness(int set[10][3])
+void Fitness(bool** set)
 {
-  for(int i=0; i<10;i++)
+  int maX = 0;
+  int index = 0;
+  int* temp;
+  for(int i=0; i<10; i++)
   {
-    if(set[i][0] > _colours[0]-20 && set[i][0] < _colours[0]+20)
-    {
-      _fitness[i] = _fitness[i] + 1;
-    }
-    if(set[i][1] > _colours[1]-20 && set[i][1] < _colours[1]+20)
-    {
-      _fitness[i] = _fitness[i] + 1;
-    }
-    if(set[i][2] > _colours[2]-20 && set[i][2] < _colours[2]+20)
-    {
-      _fitness[i] = _fitness[i] + 1;
-    }
-    if(set[i][0] == _colours[0])
-    {
-      _fitness[i] = _fitness[i] + 50;
-    }
-    if(set[i][1] == _colours[1])
-    {
-      _fitness[i] = _fitness[i] + 50;
-    }
-    if(set[i][2] == _colours[2])
-    {
-      _fitness[i] = _fitness[i] + 50;
-    }
-    Serial.println(_fitness[i]);
+    int* phenotype = BoolToInt(set[i]);
+    _fitness[i] = 1000/(abs(phenotype[0] - _colours[0]) + abs(phenotype[1] - _colours[1]) + abs(phenotype[2] - _colours[2]) + 1);
+    free(phenotype);
   }
+  for(int i=0;i<10;i++)
+  {
+    temp = BoolToInt(set[i]);
+    if(_fitness[i]>maX)
+    {
+      maX = _fitness[i];
+      index = i;
+    }
+  }
+  setColorOnSecond(temp[index]);
+  //Serial.println(maX);
+  //Serial.println(temp[1]);
+  //Serial.println(temp[2]);
+  free(temp);  
 }
 
-void Selection (int prevGen[10][3])
+int* BoolToInt(bool* set)
+{
+  int* ret = (int)malloc(3*sizeof(int));
+  int k=0;
+  int sum0 = 0;
+  int sum1 = 0;
+  int sum2 = 0;
+  for(int i=23; i>0; i--)
+  {
+    if(k<8)
+    {
+      sum2 += set[i] * pow(2,k);
+    }
+    if(k>=8 && k<16)
+    {
+      sum1 += set[i] * pow(2,k-8);
+    }
+    if(k>=16 && k<=23)
+    {
+      sum0 += set[i] * pow(2,k-16);
+    }
+  }
+  ret[0] = sum0;
+  ret[1] = sum1;
+  ret[2] = sum2;
+  
+  return ret;
+}
+
+int Selection ()
 {
   int ranD = random(0,10);
   int ranD2 = random(0,10);
-  for(int i=0; i<3; i++)
+  /*Serial.print("\n ranD je ");
+  Serial.println(ranD);
+  Serial.print("\n ranD2 je ");
+  Serial.println(ranD2);
+  */
+  if(_fitness[ranD] > _fitness[ranD2])
   {
-    parentGen[0][i] = prevGen[ranD][i];
+    return ranD;
   }
-  for(int i=0; i<3; i++)
+  else
   {
-    parentGen[1][i] = prevGen[ranD2][i];
-  }
-
-}
-
-void removeFromArray (int arraY[], int index)
-{
-  int returnArray[sizeof(arraY) - 1];
-  int i=0;
-  while(i<sizeof(arraY))
-  {
-    if(i == index)
-    {
-      i++;
-      while(i<sizeof(arraY))
-      {
-        returnArray[i-1] = arraY[i];
-        i++;
-      }
-      break;
-    }
-    else
-    {
-      returnArray[i] = arraY[i];
-      i++;
-    } 
-  }
-  for(int k=0;k<sizeof(returnArray);k++)
-  {
-    tempFit[k] = returnArray[k];
+    return ranD2;
   }
 }
 
-int removeFrom2DArray (int arraY[10][3], int index)
-{
-  int returnArray[sizeof(arraY) - 1][3];
-  for(int i=0; i<sizeof(arraY);i++)
-  {
-    if(i == index)
-    {
-      i++;
-      while(i<sizeof(arraY))
-      {
-        for(int j=0; j<3; j++)
-        {
-          returnArray[i-1][j] = arraY[i][j];
-        }
-        i++;
-      }
-      break;
-    }
-    else
-    {
-        for(int j=0; j<3; j++)
-        {
-          returnArray[i][j] = arraY[i][j];
-        }
-    } 
-  }
-  for(int k = 0; k<sizeof(returnArray); k++)
-  {
-    for(int l = 0; l<3; l++)
-    {
-      tempGen[k][l] = returnArray[k][l];
-    }
-  }
-
-  
-
-}
  
 void setColorOnFirst(int colour[])
 {
