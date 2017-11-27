@@ -181,9 +181,8 @@ void Fitness(bool** set)
     //Serial.println(phenotype[0]);
     //Serial.println(phenotype[1]);
     //Serial.println(phenotype[2]);
-    Serial.print("\n phenotyp je: ");
     _fitness[i] = 1000/((phenotype[0] - _colours[0])*(phenotype[0] - _colours[0]) + (phenotype[1] - _colours[1])*(phenotype[1] - _colours[1]) + (phenotype[2] - _colours[2])*(phenotype[2] - _colours[2]) + 1);
-    //Serial.println(phenotype[1]);
+    Serial.println(phenotype[2]);
     //Serial.println(phenotype[0] - _colours[0]);
     //Serial.println(phenotype[1] - _colours[1]);
     //Serial.println(phenotype[2] - _colours[2]);
@@ -210,7 +209,7 @@ void Fitness(bool** set)
 
 int* BoolToInt(bool* set)
 {
-  int* ret = (int)malloc(3*sizeof(int));
+  int* ret = (int*)malloc(3*sizeof(int));
   int sum0 = 0;
   int sum1 = 0;
   int sum2 = 0;
