@@ -44,7 +44,7 @@ void setup()
   Fitness(_actual);
   //Serial.print("ide");
   int k=0;
-  while(canWeEnd(_fitness) == 0)
+  while(canWeEnd(_fitness) == 0) 
   {
     k++;
     newGen = Crossover();
@@ -58,8 +58,8 @@ void setup()
     //Serial.print("Fitness done");
     Substitute();
     //Serial.print("Substitution done");
-    
-    //Serial.println(k);
+    Serial.print("\n Cyklus: ");
+    Serial.print(k);
     //delay(500);
   }
   /*for(int i=0;i<10;i++)
@@ -83,18 +83,34 @@ void loop()
 void Substitute()
 {
   int ranD;
+  bool** competition_partners=(bool**)malloc(2*sizeof(bool*));
+
   for(int i=0;i<10;i++)
-  {
+  {    
+    first = Selection();
+    second = Selection();
     for(int j=0;j<24;j++)
-    {
-      _actual[i][j] = newGen[i][j];
+    {     
+      
+      competition_partners[0] = _actual[first][i];
+      competition_partners[1] = newGen[second][i];
+      
+      if(temp_fitness[0] > temp_fitness[1]
+      {
+        newGen[i][j] = competition_partners[0][j];
+      }
+      else
+      {
+        newGen[i][j] = competition_partners[1][j];
+      }
     }
   }
   for(int i=0; i<10; i++)
   {
-    free(newGen[i]);
+    free(newGen[i]);   
   }
   free(newGen);
+  free(competition_partners);
 
 
 }
@@ -178,17 +194,19 @@ void Fitness(bool** set)
   {
     
     int* phenotype = BoolToInt(set[i]);
-    //Serial.println(phenotype[0]);
-    //Serial.println(phenotype[1]);
-    //Serial.println(phenotype[2]);
     _fitness[i] = 1000/((phenotype[0] - _colours[0])*(phenotype[0] - _colours[0]) + (phenotype[1] - _colours[1])*(phenotype[1] - _colours[1]) + (phenotype[2] - _colours[2])*(phenotype[2] - _colours[2]) + 1);
-    Serial.println(phenotype[2]);
+    //Serial.println(phenotype[1]);
     //Serial.println(phenotype[0] - _colours[0]);
     //Serial.println(phenotype[1] - _colours[1]);
     //Serial.println(phenotype[2] - _colours[2]);
     //Serial.println(_fitness[i]);
-
-    free(phenotype);
+    /*Serial.print("\n phenotype[0] = ");
+    Serial.print(phenotype[0]);
+    Serial.print("\n phenotype[1] = ");
+    Serial.print(phenotype[1]);
+    Serial.print("\n phenotype[2] = ");
+    Serial.print(phenotype[2]); */
+    //free(phenotype);
   }
   for(int i=0;i<10;i++)
   {
@@ -198,7 +216,7 @@ void Fitness(bool** set)
       maX = _fitness[i];
       index = i;
     }
-    //Serial.println(_fitness[i]);
+    Serial.println(_fitness[i]);
   }
   setColorOnSecond(temp[index]);
   //Serial.println(maX);
@@ -207,35 +225,41 @@ void Fitness(bool** set)
   free(temp);  
 }
 
+
 int* BoolToInt(bool* set)
 {
   int* ret = (int*)malloc(3*sizeof(int));
   int sum0 = 0;
   int sum1 = 0;
   int sum2 = 0;
-  //bool test[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1};
+  //bool test[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1};
   for(int m=0; m<24; m++)
   {
     if(m<8)
     {
-      sum0 += (int)set[m] * (pow(2,m));
+      sum0 += (int)set[m] * 1<<m;
     }
     if(m>7 && m<16)
     {
-      sum1 += (int)set[m] * (pow(2,(m-8)));
+      sum1 += (int)set[m] * 1<<(m-8);
     }
     if(m>15 && m<24)
-    {
-      sum2 += (int)set[m] * (pow(2,(m-16)));
+    {    
+      sum2 += (int)set[m] * 1<<(m-16);
     }
     //Serial.println(set[m]);
+    //Serial.print("\n novy prikaz: ");
+    //Serial.print(1 << m);
   }
   ret[0] = sum0;
   ret[1] = sum1;
   ret[2] = sum2;
-  //Serial.println(ret[0]);
-  //Serial.println(ret[1]);
-  //Serial.println(ret[2]);
+  /*Serial.print("\n ret[0] = ");
+  Serial.print(ret[0]);
+  Serial.print("\n ret[1] = ");
+  Serial.print(ret[1]);
+  Serial.print("\n ret[2] = ");
+  Serial.print(ret[2]);*/
   
 
   return ret;
