@@ -8,6 +8,7 @@ int bluePin2 = 3;
 int _colours[] = {255, 0, 255};
 int _nothing[] = {0, 0, 0};
 bool** _actual = (bool**)malloc(10*sizeof(bool*));
+bool** _old = (bool**)malloc(10*sizeof(bool*));
 float* _fitness = (float*)malloc(10*sizeof(float));
 bool tempGen[10][3];
 bool tempFit[10];
@@ -47,41 +48,29 @@ void setup()
   while(canWeEnd(_fitness) == 0) 
   {
     k++;
-    if(k>1)
-    {
-      for(int i=0; i<10; i++)
-      {
-        free(_actual[i]);
-      }
-      free(_actual);
-      _actual = newGen;
-      for(int i=0; i<10; i++)
-      {
-        free(newGen[i]);
-      }
-      free(newGen);      
-    }
     newGen = Crossover();
     free(_fitness);
-    /*for(int i=0;i<10;i++)
-    {
-      Serial.println(_fitness[i]);
-    }*/
     Mutation();
     //Serial.print("Mutation done");
     _fitness = Fitness(newGen);
     //Serial.print("Fitness done");
-    newGen = Substitute();
+    _old = _actual;
+    _actual = Substitute();
+
     //Serial.print("Substitution done");
     Serial.print("\n Cyklus: ");
     Serial.print(k);
-    
+    for(int i=0; i<10; i++)
+    {
+      free(newGen[i]);
+      free(_old[i]);
+    }
+    free(newGen);
+    free(_old);
+     
     //delay(500);
   }
-  /*for(int i=0;i<10;i++)
-  {
-    Serial.println(_fitness[i]);
-  }*/
+
   
 }
  
@@ -115,7 +104,8 @@ bool** Substitute()
     } 
     
   }
-        
+  free(fitnessPop);
+  free(fitnessChild);   
   return ret;
 }
 
