@@ -8,12 +8,11 @@ int bluePin2 = 3;
 int _colours[] = {255, 0, 255};
 int _nothing[] = {0, 0, 0};
 bool** _actual = (bool**)malloc(10*sizeof(bool*));
-bool** _old = (bool**)malloc(10*sizeof(bool*));
-float* _fitness = (float*)malloc(10*sizeof(float));
+float* _fitness;
 bool tempGen[10][3];
 bool tempFit[10];
 int* parentGen = (int*)malloc(2*sizeof(int));;
-bool** newGen = (bool**)malloc(10*sizeof(bool*));
+bool** newGen;
  
 //uncomment this line if using a Common Anode LED
 #define COMMON_ANODE
@@ -49,17 +48,18 @@ void setup()
   {
     k++;
     newGen = Crossover();
+    
     free(_fitness);
     Mutation();
+    //_fitness = Fitness(newGen);
     //Serial.print("Mutation done");
-    _fitness = Fitness(newGen);
     //Serial.print("Fitness done");
-    _old = _actual;
+    bool** _old = _actual;
     _actual = Substitute();
+    _fitness = Fitness(_actual);
 
     //Serial.print("Substitution done");
-    Serial.print("\n Cyklus: ");
-    Serial.print(k);
+
     for(int i=0; i<10; i++)
     {
       free(newGen[i]);
@@ -67,7 +67,12 @@ void setup()
     }
     free(newGen);
     free(_old);
-     
+
+    
+    Serial.print("\n Cyklus: ");
+    Serial.print(k);
+
+  
     //delay(500);
   }
 
@@ -175,7 +180,7 @@ float* Fitness(bool** set)
 {
   int maX = 0;
   int index = 0;
-  float* fitness = (float*)malloc(10*sizeof(float*));
+  float* fitness = (float*)malloc(10*sizeof(float));
   int* temp;
   /*for(int i=0;i<10;i++)
   {
