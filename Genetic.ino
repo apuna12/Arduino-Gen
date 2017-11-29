@@ -71,11 +71,13 @@ void setup()
     
     Serial.print("\n Cyklus: ");
     Serial.print(k);
+    Serial.print("\n");
 
   
     //delay(500);
   }
 
+Serial.print("\n I HAVE IT :)");
   
 }
  
@@ -90,8 +92,43 @@ bool** Substitute()
   int randChild;
   float* fitnessPop = Fitness(_actual);
   float* fitnessChild = Fitness(newGen);
+  int bestChild = 0;
+  int bestPop = 0;
+  float maxChild = 0;
+  float maxPop = 0;
+  int indexPop = 0;
+  int indexChild = 0;
   bool** ret = (bool**)malloc(10*sizeof(bool*));
+
+  
   for(int i=0;i<10;i++)
+  {
+    if(fitnessPop[i]>maxPop)
+    {
+      maxPop = fitnessPop[i];
+      indexPop = i;
+    }
+
+    if(fitnessChild[i]>maxChild)
+    {
+      maxChild = fitnessChild[i];
+      indexChild = i;
+    }
+  }
+  ret[0] = (bool*)malloc(24*sizeof(bool));
+  for(int i=0;i<24;i++)
+  {
+    if(maxPop>maxChild)
+    {
+      ret[0][i] = _actual[indexPop][i];
+    }
+    else
+    {
+      ret[0][i] = newGen[indexChild][i];
+    }
+  }
+  
+  for(int i=1;i<10;i++)
   {
     randPop = random(0,10);
     randChild = random(0,10);
@@ -151,10 +188,10 @@ void Mutation()
 {
   int ranD;
   for(int i=0; i< 10;i++)
-  {
-    ranD = random(100); 
+  {      
     for(int j=0; j<24; j++)
     {
+      ranD = random(100); 
       if(ranD >90)
       {
         newGen[i][j] = !newGen[i][j]; 
@@ -194,7 +231,7 @@ float* Fitness(bool** set)
   {
     
     int* phenotype = BoolToInt(set[i]);
-    fitness[i] = 1000/((phenotype[0] - _colours[0])*(phenotype[0] - _colours[0]) + (phenotype[1] - _colours[1])*(phenotype[1] - _colours[1]) + (phenotype[2] - _colours[2])*(phenotype[2] - _colours[2]) + 1);
+    fitness[i] = double(1000)/(tabs(phenotype[0], _colours[0]) + tabs(phenotype[1], _colours[1]) + tabs(phenotype[2], _colours[2]) + 1);
     //Serial.println(phenotype[1]);
     //Serial.println(phenotype[0] - _colours[0]);
     //Serial.println(phenotype[1] - _colours[1]);
@@ -206,26 +243,38 @@ float* Fitness(bool** set)
     Serial.print(phenotype[1]);
     Serial.print("\n phenotype[2] = ");
     Serial.print(phenotype[2]); */
-    //free(phenotype);
+    free(phenotype);
   }
   for(int i=0;i<10;i++)
   {
-    temp = BoolToInt(set[i]);
     if(fitness[i]>maX)
     {
       maX = fitness[i];
       index = i;
     }
-    Serial.println(fitness[i]);
+    Serial.println(fitness[i],4);
   }
-  setColorOnSecond(temp[index]);
+  temp = BoolToInt(set[index]);
+  setColorOnSecond(temp);
   //Serial.println(maX);
   //Serial.println(temp[1]);
   //Serial.println(temp[2]);
-  free(temp); 
+  free(temp);
+
   return fitness; 
 }
 
+
+int tabs(int x, int y)
+{
+  int ret = x - y;
+
+  if(ret<0)
+  {
+    ret = -ret;
+  }
+  return ret;
+}
 
 int* BoolToInt(bool* set)
 {
