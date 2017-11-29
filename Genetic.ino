@@ -8,7 +8,7 @@ int bluePin2 = 3;
 int _colours[] = {255, 0, 255};
 int _nothing[] = {0, 0, 0};
 bool** _actual = (bool**)malloc(10*sizeof(bool*));
-float _fitness[10];
+float* _fitness = (float*)malloc(10*sizeof(float));
 bool tempGen[10][3];
 bool tempFit[10];
 int* parentGen = (int*)malloc(2*sizeof(int));;
@@ -41,25 +41,41 @@ void setup()
   }
   
   // first Fitness
-  Fitness(_actual);
+  _fitness = Fitness(_actual);
   //Serial.print("ide");
   int k=0;
   while(canWeEnd(_fitness) == 0) 
   {
     k++;
+    if(k>1)
+    {
+      for(int i=0; i<10; i++)
+      {
+        free(_actual[i]);
+      }
+      free(_actual);
+      _actual = newGen;
+      for(int i=0; i<10; i++)
+      {
+        free(newGen[i]);
+      }
+      free(newGen);      
+    }
     newGen = Crossover();
+    free(_fitness);
     /*for(int i=0;i<10;i++)
     {
       Serial.println(_fitness[i]);
     }*/
     Mutation();
     //Serial.print("Mutation done");
-    Fitness(newGen);
+    _fitness = Fitness(newGen);
     //Serial.print("Fitness done");
-    Substitute();
+    newGen = Substitute();
     //Serial.print("Substitution done");
     Serial.print("\n Cyklus: ");
     Serial.print(k);
+    
     //delay(500);
   }
   /*for(int i=0;i<10;i++)
@@ -71,48 +87,36 @@ void setup()
  
 void loop()
 {
-  
- /* for(int i=0; i< 10; i++)
-  {
-    setColorOnFirst(_colours[i]);
-    delay(1000);
-  }*/
-  
+    
 }
 
-void Substitute()
+bool** Substitute()
 {
-  int ranD;
-  bool** competition_partners=(bool**)malloc(2*sizeof(bool*));
-
+  int randPop;
+  int randChild;
+  float* fitnessPop = Fitness(_actual);
+  float* fitnessChild = Fitness(newGen);
+  bool** ret = (bool**)malloc(10*sizeof(bool*));
   for(int i=0;i<10;i++)
-  {    
-    first = Selection();
-    second = Selection();
-    for(int j=0;j<24;j++)
-    {     
-      
-      competition_partners[0] = _actual[first][i];
-      competition_partners[1] = newGen[second][i];
-      
-      if(temp_fitness[0] > temp_fitness[1]
+  {
+    randPop = random(0,10);
+    randChild = random(0,10);
+    ret[i] = (bool*)malloc(24*sizeof(bool));
+    for(int j=0; j<24; j++)
+    {
+      if(fitnessPop[randPop]>fitnessChild[randChild])
       {
-        newGen[i][j] = competition_partners[0][j];
+        ret[i][j] = _actual[i][j];
       }
       else
       {
-        newGen[i][j] = competition_partners[1][j];
+        ret[i][j] = newGen[i][j];
       }
-    }
+    } 
+    
   }
-  for(int i=0; i<10; i++)
-  {
-    free(newGen[i]);   
-  }
-  free(newGen);
-  free(competition_partners);
-
-
+        
+  return ret;
 }
 
 bool** Crossover()
@@ -177,10 +181,11 @@ bool canWeEnd(float fitness[])
   return 0;
 }
 
-void Fitness(bool** set)
+float* Fitness(bool** set)
 {
   int maX = 0;
   int index = 0;
+  float* fitness = (float*)malloc(10*sizeof(float*));
   int* temp;
   /*for(int i=0;i<10;i++)
   {
@@ -194,7 +199,7 @@ void Fitness(bool** set)
   {
     
     int* phenotype = BoolToInt(set[i]);
-    _fitness[i] = 1000/((phenotype[0] - _colours[0])*(phenotype[0] - _colours[0]) + (phenotype[1] - _colours[1])*(phenotype[1] - _colours[1]) + (phenotype[2] - _colours[2])*(phenotype[2] - _colours[2]) + 1);
+    fitness[i] = 1000/((phenotype[0] - _colours[0])*(phenotype[0] - _colours[0]) + (phenotype[1] - _colours[1])*(phenotype[1] - _colours[1]) + (phenotype[2] - _colours[2])*(phenotype[2] - _colours[2]) + 1);
     //Serial.println(phenotype[1]);
     //Serial.println(phenotype[0] - _colours[0]);
     //Serial.println(phenotype[1] - _colours[1]);
@@ -211,18 +216,19 @@ void Fitness(bool** set)
   for(int i=0;i<10;i++)
   {
     temp = BoolToInt(set[i]);
-    if(_fitness[i]>maX)
+    if(fitness[i]>maX)
     {
-      maX = _fitness[i];
+      maX = fitness[i];
       index = i;
     }
-    Serial.println(_fitness[i]);
+    Serial.println(fitness[i]);
   }
   setColorOnSecond(temp[index]);
   //Serial.println(maX);
   //Serial.println(temp[1]);
   //Serial.println(temp[2]);
-  free(temp);  
+  free(temp); 
+  return fitness; 
 }
 
 
