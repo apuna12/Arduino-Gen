@@ -1,1 +1,1 @@
-# My arduino genetic algorythm
+# My arduino genetic algorithm
