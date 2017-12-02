@@ -1,3 +1,6 @@
+
+#include "genetic.h"
+
 int redPin1 = 8;
 int greenPin1 = 11;
 int bluePin1 = 13;
@@ -5,7 +8,8 @@ int bluePin1 = 13;
 int redPin2 = 6;
 int greenPin2 = 5;
 int bluePin2 = 3;
-int _colours[] = {255, 0, 255};
+
+int _colours[] = {255, 255, 0};
 int _nothing[] = {0, 0, 0};
 bool** _actual = (bool**)malloc(10*sizeof(bool*));
 float* _fitness;
@@ -13,6 +17,8 @@ bool tempGen[10][3];
 bool tempFit[10];
 int* parentGen = (int*)malloc(2*sizeof(int));;
 bool** newGen;
+individual ind;
+
  
 //uncomment this line if using a Common Anode LED
 #define COMMON_ANODE
@@ -29,7 +35,7 @@ void setup()
   Serial.begin(9600);
   
   setColorOnSecond(_nothing);  
-  
+  initialization(5);
  //initialization
   for(int i=0; i<10; i++)
   {
