@@ -11,7 +11,8 @@ int bluePin2 = 3;
 
 int _colours[] = {255, 255, 0};
 int _nothing[] = {0, 0, 0};
-bool** _actual = (bool**)malloc(10*sizeof(bool*));
+//bool** _actual = (bool**)malloc(10*sizeof(bool*));
+individual* _actual;
 float* _fitness;
 bool tempGen[10][3];
 bool tempFit[10];
@@ -24,7 +25,7 @@ individual ind;
 #define COMMON_ANODE
 void setup()
 {
-  setColorOnFirst(_colours);
+  //setColorOnFirst(_colours);
   randomSeed(analogRead(0));
   pinMode(redPin1, OUTPUT);
   pinMode(greenPin1, OUTPUT);
@@ -34,18 +35,30 @@ void setup()
   pinMode(bluePin2, OUTPUT);
   Serial.begin(9600);
   
-  setColorOnSecond(_nothing);  
-  initialization(5);
+  //setColorOnSecond(_nothing); 
+   
  //initialization
-  for(int i=0; i<10; i++)
+ /* for(int i=0; i<10; i++)
   {
     _actual[i] = (bool*)malloc(24*sizeof(bool));
     for(int j=0; j<24; j++)
     {
       _actual[i][j] = random(0,2);
     }    
+  }*/
+
+  _actual = initialization(10);
+   for(int i=0; i<10; i++)
+  {
+    for(int j=0; j<24; j++)
+    {
+      Serial.print(_actual[i].genotype[j]);
+    }    
+    Serial.print("\n ");
   }
+}
   
+ /* 
   // first Fitness
   _fitness = Fitness(_actual);
   //Serial.print("ide");
@@ -86,12 +99,12 @@ void setup()
 Serial.print("\n I HAVE IT :)");
   
 }
- 
+ */
 void loop()
 {
     
 }
-
+/*
 bool** Substitute()
 {
   int randPop;
@@ -225,14 +238,7 @@ float* Fitness(bool** set)
   int index = 0;
   float* fitness = (float*)malloc(10*sizeof(float));
   int* temp;
-  /*for(int i=0;i<10;i++)
-  {
-    for(int j=0;j<24;j++)
-    {
-      Serial.print(set[i][j]);
-    }
-    Serial.print("\n ");
-  }*/
+
   for(int i=0; i<10; i++)
   {
     
@@ -243,12 +249,7 @@ float* Fitness(bool** set)
     //Serial.println(phenotype[1] - _colours[1]);
     //Serial.println(phenotype[2] - _colours[2]);
     //Serial.println(_fitness[i]);
-    /*Serial.print("\n phenotype[0] = ");
-    Serial.print(phenotype[0]);
-    Serial.print("\n phenotype[1] = ");
-    Serial.print(phenotype[1]);
-    Serial.print("\n phenotype[2] = ");
-    Serial.print(phenotype[2]); */
+
     free(phenotype);
   }
   for(int i=0;i<10;i++)
@@ -310,12 +311,7 @@ int* BoolToInt(bool* set)
   ret[0] = sum0;
   ret[1] = sum1;
   ret[2] = sum2;
-  /*Serial.print("\n ret[0] = ");
-  Serial.print(ret[0]);
-  Serial.print("\n ret[1] = ");
-  Serial.print(ret[1]);
-  Serial.print("\n ret[2] = ");
-  Serial.print(ret[2]);*/
+
   
 
   return ret;
@@ -325,11 +321,7 @@ int Selection ()
 {
   int ranD = random(0,10);
   int ranD2 = random(0,10);
-  /*Serial.print("\n ranD je ");
-  Serial.println(ranD);
-  Serial.print("\n ranD2 je ");
-  Serial.println(ranD2);
-  */
+
   if(_fitness[ranD] > _fitness[ranD2])
   {
     return ranD;
@@ -365,4 +357,4 @@ void setColorOnSecond(int colour[])
   analogWrite(redPin2, red);
   analogWrite(greenPin2, green);
   analogWrite(bluePin2, blue);  
-}
+}*/
