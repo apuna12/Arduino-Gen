@@ -17,8 +17,8 @@ float* _fitness;
 bool tempGen[10][3];
 bool tempFit[10];
 int* parentGen = (int*)malloc(2*sizeof(int));;
-bool** newGen;
-individual ind;
+//bool** newGen;
+individual* newGen;
 
  
 //uncomment this line if using a Common Anode LED
@@ -48,14 +48,18 @@ void setup()
   }*/
 
   _actual = initialization(10);
-   for(int i=0; i<10; i++)
+  Fitness(_actual, 10);
+  int a=0;
+  /*for(int i=0; i<10; i++)
   {
+    a = Selection(_actual);
     for(int j=0; j<24; j++)
     {
+      newGen[i].genotype[j] = _actual[a].genotype[j];
       Serial.print(_actual[i].genotype[j]);
     }    
     Serial.print("\n ");
-  }
+  }*/
 }
   
  /* 

@@ -9,7 +9,10 @@ typedef struct individual
 }individual;
 
 individual* initialization(unsigned int size);
-
+int Selection(individual* set);
+void Fitness(individual* set, int size);
+int tabs(int x, int y);
+int* BoolToInt(individual set);
 
 
 #endif
