@@ -70,6 +70,41 @@ int Selection(individual* set)
 }
 
 
+individual* Crossover(individual* set, int size)
+{
+  individual* ret;
+  int* parentGen = (int*)malloc(2*sizeof(int));
+  for(int i=0;i<size;i++)
+  {
+    parentGen[0] = Selection(set);
+    parentGen[1] = Selection(set);
+    while(parentGen[0] == parentGen[1])
+    {
+      parentGen[1] = Selection(set);
+      Serial.print("\n opakuje sa \n");
+    }
+    
+    int ranD = random(1,23);
+    for(int j=0;j<24;j++)
+    {
+      if(j<ranD)
+      {
+        ret[i].genotype[j] = set[parentGen[0]].genotype[j];
+        //Serial.print("parentgen 0 je: ");
+        //Serial.println(parentGen[0]);
+      }
+      else
+      {
+        ret[i].genotype[j] = set[parentGen[1]].genotype[j];
+      }
+    }
+  }
+  Serial.print("\n koniec crossoveru \n ");
+  free(parentGen);
+  return ret;
+}
+
+
 int* BoolToInt(individual set)
 {
   int* ret = (int*)malloc(3*sizeof(int));

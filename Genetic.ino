@@ -16,8 +16,9 @@ individual* _actual;
 float* _fitness;
 bool tempGen[10][3];
 bool tempFit[10];
-int* parentGen = (int*)malloc(2*sizeof(int));;
+//int* parentGen = (int*)malloc(2*sizeof(int));
 //bool** newGen;
+individual* children;
 individual* newGen;
 
  
@@ -50,16 +51,29 @@ void setup()
   _actual = initialization(10);
   Fitness(_actual, 10);
   int a=0;
+  int b=0;
+ // a = Selection(_actual);
+  //b = Selection(_actual);
+  //Serial.print("selekcia \n");
+  Serial.println(a);
+  Serial.println(b);
+  children = Crossover(_actual, 10);
+
+  
+  
   /*for(int i=0; i<10; i++)
   {
-    a = Selection(_actual);
+    //a = Selection(_actual);
     for(int j=0; j<24; j++)
     {
-      newGen[i].genotype[j] = _actual[a].genotype[j];
+      //newGen[i].genotype[j] = _actual[a].genotype[j];
       Serial.print(_actual[i].genotype[j]);
+      Serial.print(children[i].genotype[j]);
+      Serial.print("\n ");
     }    
     Serial.print("\n ");
   }*/
+  
 }
   
  /* 
