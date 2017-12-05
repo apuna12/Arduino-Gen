@@ -43,7 +43,7 @@ void Fitness(individual* set, int size)
       maX = set[i].fitness;
       index = i;
     }
-    Serial.println(set[i].fitness,4);
+   // Serial.println(set[i].fitness,4);
   }
   temp = BoolToInt(set[index]);
 //  setColorOnSecond(temp);
@@ -72,8 +72,8 @@ int Selection(individual* set)
 
 individual* Crossover(individual* set, int size)
 {
-  individual* ret;
-  int* parentGen = (int*)malloc(2*sizeof(int));
+  individual* ret = malloc(size*sizeof(individual));
+  int parentGen[] = {0,0};
   for(int i=0;i<size;i++)
   {
     parentGen[0] = Selection(set);
@@ -81,7 +81,7 @@ individual* Crossover(individual* set, int size)
     while(parentGen[0] == parentGen[1])
     {
       parentGen[1] = Selection(set);
-      Serial.print("\n opakuje sa \n");
+      //Serial.print("\n opakuje sa \n");
     }
     
     int ranD = random(1,23);
@@ -99,8 +99,7 @@ individual* Crossover(individual* set, int size)
       }
     }
   }
-  Serial.print("\n koniec crossoveru \n ");
-  free(parentGen);
+
   return ret;
 }
 

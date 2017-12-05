@@ -13,7 +13,7 @@ int _colours[] = {255, 255, 0};
 int _nothing[] = {0, 0, 0};
 //bool** _actual = (bool**)malloc(10*sizeof(bool*));
 individual* _actual;
-float* _fitness;
+//float* _fitness;
 bool tempGen[10][3];
 bool tempFit[10];
 //int* parentGen = (int*)malloc(2*sizeof(int));
@@ -54,25 +54,23 @@ void setup()
   int b=0;
  // a = Selection(_actual);
   //b = Selection(_actual);
-  //Serial.print("selekcia \n");
-  Serial.println(a);
-  Serial.println(b);
   children = Crossover(_actual, 10);
 
   
   
-  /*for(int i=0; i<10; i++)
+  for(int i=0; i<10; i++)
   {
     //a = Selection(_actual);
     for(int j=0; j<24; j++)
     {
-      //newGen[i].genotype[j] = _actual[a].genotype[j];
+      newGen[i].genotype[j] = _actual[a].genotype[j];
       Serial.print(_actual[i].genotype[j]);
-      Serial.print(children[i].genotype[j]);
-      Serial.print("\n ");
+      //Serial.print("\n ");
+      //Serial.print(children[i].genotype[j]);
+      
     }    
     Serial.print("\n ");
-  }*/
+  }
   
 }
   
