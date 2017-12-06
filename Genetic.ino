@@ -43,11 +43,11 @@ void setup()
     children = Crossover(_actual, 10);
     Mutation(children, 10);
     Fitness(children, 10, _colours);
-    newGen = Substitute(_actual, children, 10);
-    Fitness(newGen,10, _colours);
-    _actual = newGen;
+    individual* old = _actual;
+    _actual = Substitute(_actual, children, 10);
+    Fitness(_actual, 10, _colours);
     free(children);
-    free(newGen);
+    free(old);
     Serial.print("\n Cyklus: ");
     Serial.print(k);
     Serial.print("\n");

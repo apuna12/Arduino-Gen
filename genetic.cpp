@@ -80,7 +80,7 @@ individual* Crossover(individual* set, int size)
       //Serial.print("\n opakuje sa \n");
     }
     
-    int ranD = random(1,23);
+    int ranD = random(1,22);
     for(int j=0;j<24;j++)
     {
       if(j<ranD)
@@ -156,7 +156,7 @@ individual* Substitute(individual* setPop, individual* setChil, int size)
   float maxPop = 0;
   int indexPop = 0;
   int indexChild = 0;
-  individual* ret = malloc(size*sizeof(individual*));
+  individual* ret = malloc(size*sizeof(individual));
 
   
   for(int i=0;i<size;i++)
