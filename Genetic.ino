@@ -56,9 +56,11 @@ void setup()
   //b = Selection(_actual);
   children = Crossover(_actual, 10);
 
+
+
   
   
-  for(int i=0; i<10; i++)
+  /*for(int i=0; i<10; i++)
   {
     //a = Selection(_actual);
     for(int j=0; j<24; j++)
@@ -70,7 +72,7 @@ void setup()
       
     }    
     Serial.print("\n ");
-  }
+  }*/
   
 }
   

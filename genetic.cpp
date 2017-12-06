@@ -99,7 +99,6 @@ individual* Crossover(individual* set, int size)
       }
     }
   }
-
   return ret;
 }
 
