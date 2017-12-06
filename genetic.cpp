@@ -1,8 +1,6 @@
 #include "genetic.h"
 
 
-
-
 individual* initialization(unsigned int size)
 {
 
@@ -22,12 +20,11 @@ individual* initialization(unsigned int size)
 	return p_population;
 }
 
-void Fitness(individual* set, int size)
+void Fitness(individual* set, int size,int colours[])
 {
   int maX = 0;
   int index = 0;
   int* temp;
-  int colours[] = {255, 255, 0};
   for(int i=0; i<size; i++)
   {
     
@@ -43,16 +40,15 @@ void Fitness(individual* set, int size)
       maX = set[i].fitness;
       index = i;
     }
-   // Serial.println(set[i].fitness,4);
+    Serial.println(set[index].fitness,4);
   }
   temp = BoolToInt(set[index]);
-//  setColorOnSecond(temp);
-  //Serial.println(maX);
-  //Serial.println(temp[1]);
-  //Serial.println(temp[2]);
+  setColorOnSecond(temp);
   free(temp);
  
 }
+
+
 
 int Selection(individual* set)
 {
@@ -102,6 +98,22 @@ individual* Crossover(individual* set, int size)
   return ret;
 }
 
+void Mutation(individual* set, int size)
+{
+  int ranD;
+  for(int i=0; i<size;i++)
+  {      
+    for(int j=0; j<24; j++)
+    {
+      ranD = random(100); 
+      if(ranD >90)
+      {
+        set[i].genotype[j] = !set[i].genotype[j]; 
+      }
+    }
+    
+  }
+}
 
 int* BoolToInt(individual set)
 {
@@ -134,6 +146,76 @@ int* BoolToInt(individual set)
   return ret;
 }
 
+individual* Substitute(individual* setPop, individual* setChil, int size)
+{
+  int randPop;
+  int randChild;
+  int bestChild = 0;
+  int bestPop = 0;
+  float maxChild = 0;
+  float maxPop = 0;
+  int indexPop = 0;
+  int indexChild = 0;
+  individual* ret = malloc(size*sizeof(individual*));
+
+  
+  for(int i=0;i<size;i++)
+  {
+    if(setPop[i].fitness>maxPop)
+    {
+      maxPop = setPop[i].fitness;
+      indexPop = i;
+    }
+
+    if(setChil[i].fitness>maxChild)
+    {
+      maxChild = setChil[i].fitness;
+      indexChild = i;
+    }
+  }
+  for(int i=0;i<24;i++)
+  {
+    if(maxPop>maxChild)
+    {
+      ret[0].genotype[i] = setPop[indexPop].genotype[i];
+    }
+    else
+    {
+      ret[0].genotype[i] = setChil[indexChild].genotype[i];
+    }
+  }
+  
+  for(int i=1;i<size;i++)
+  {
+    randPop = random(0,size);
+    randChild = random(0,size);;
+    for(int j=0; j<24; j++)
+    {
+      if(setPop[randPop].fitness>setChil[randChild].fitness)
+      {
+        ret[i].genotype[j] = setPop[i].genotype[j];
+      }
+      else
+      {
+        ret[i].genotype[j] = setChil[i].genotype[j];
+      }
+    } 
+    
+  }  
+  return ret;
+}
+
+bool canWeEnd(individual* set, int size)
+{
+  for(int i=0; i<size; i++)
+  {
+    if(set[i].fitness == 1000)
+    {
+      return 1;
+    }
+  }
+  return 0;
+}
 
 int tabs(int x, int y)
 {
@@ -145,3 +227,5 @@ int tabs(int x, int y)
   }
   return ret;
 }
+
+
