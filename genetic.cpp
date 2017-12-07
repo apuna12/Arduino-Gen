@@ -65,6 +65,19 @@ int Selection(individual* set)
   }
 }
 
+void Infusion(individual* set, int size)
+{
+  individual* temp = initialization(5);
+
+  for(int i=5;i<size;i++)
+  {
+    for(int j=0;j<24;j++)
+    {
+      set[i].genotype[j] = temp[i-5].genotype[j];
+    }
+  }
+  free(temp);
+}
 
 individual* Crossover(individual* set, int size)
 {

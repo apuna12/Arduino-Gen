@@ -31,21 +31,28 @@ void setup()
   pinMode(greenPin2, OUTPUT);
   pinMode(bluePin2, OUTPUT);
   Serial.begin(9600);
+  int size = 10;
+  int k=0;
+  
   setColorOnFirst(_colours);
   setColorOnSecond(_nothing); 
   _actual = initialization(10);
-  Fitness(_actual, 10, _colours);
-  int k=0;
+  Fitness(_actual, size, _colours);
+ 
   
-  while(canWeEnd(_actual, 10) == 0) 
+  while(canWeEnd(_actual, size) == 0) 
   {
     k++;
-    children = Crossover(_actual, 10);
-    Mutation(children, 10);
-    Fitness(children, 10, _colours);
+    children = Crossover(_actual, size);
+    Mutation(children, size);
+    Fitness(children, size, _colours);
     individual* old = _actual;
-    _actual = Substitute(_actual, children, 10);
-    Fitness(_actual, 10, _colours);
+    _actual = Substitute(_actual, children, size);
+    if(k%50==0)
+    {
+      Infusion(_actual,size);
+    }
+    Fitness(_actual, size, _colours);
     free(children);
     free(old);
     Serial.print("\n Cyklus: ");
