@@ -65,9 +65,10 @@ int Selection(individual* set)
   }
 }
 
-void Infusion(individual* set, int size)
+void Infusion(individual* set, int size, int colours[])
 {
   individual* temp = initialization(5);
+  Fitness(temp, size, colours); 
 
   for(int i=5;i<size;i++)
   {
@@ -75,6 +76,8 @@ void Infusion(individual* set, int size)
     {
       set[i].genotype[j] = temp[i-5].genotype[j];
     }
+    set[i].fitness = temp[i-5].fitness;
+    
   }
   free(temp);
 }
@@ -212,7 +215,16 @@ individual* Substitute(individual* setPop, individual* setChil, int size)
       {
         ret[i].genotype[j] = setChil[i].genotype[j];
       }
-    } 
+    }
+
+   if(setPop[randPop].fitness>setChil[randChild].fitness)
+   {
+     ret[i].fitness = setPop[i].fitness;
+   }
+   else
+   {
+     ret[i].fitness = setChil[i].fitness;
+   }
     
   }  
   return ret;

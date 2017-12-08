@@ -18,6 +18,6 @@ void Mutation(individual* set, int size);
 individual* Substitute(individual* setPop, individual* setChil, int size);
 bool canWeEnd(individual* set, int size);
 void setColorOnSecond(int colour[]);
-void Infusion(individual* set, int size);
+void Infusion(individual* set, int size, int colours[]);
 
 #endif

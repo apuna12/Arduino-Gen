@@ -50,9 +50,8 @@ void setup()
     _actual = Substitute(_actual, children, size);
     if(k%50==0)
     {
-      Infusion(_actual,size);
+      Infusion(_actual,size, _colours);
     }
-    Fitness(_actual, size, _colours);
     free(children);
     free(old);
     Serial.print("\n Cyklus: ");
