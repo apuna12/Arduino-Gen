@@ -194,12 +194,15 @@ individual* Substitute(individual* setPop, individual* setChil, int size)
     if(maxPop>maxChild)
     {
       ret[0].genotype[i] = setPop[indexPop].genotype[i];
+      ret[0].fitness = setPop[indexPop].fitness;
     }
     else
     {
       ret[0].genotype[i] = setChil[indexChild].genotype[i];
+      ret[0].fitness = setChil[indexChild].fitness;
     }
   }
+
   
   for(int i=1;i<size;i++)
   {
